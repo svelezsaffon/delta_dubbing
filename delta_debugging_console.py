@@ -15,9 +15,9 @@ class command_line:
 
         self.parser.add_argument('--all', dest='all',default=True,help='Store all variables')
 
-        self.parser.add_argument('--test', dest='test_input.txt',default=False,help='file of the test case')
+        self.parser.add_argument('--test', dest='test_input',default='test_in.txt',help='file of the test case')
 
-        self.parser.add_argument('--out', dest='test_input.txt',default=1,help='Where the output should go, default will print on console!')
+        self.parser.add_argument('--out', dest='test_out',default='test_out.txt',help='Where the output should go, default will print on console!')
 
         args = self.parser.parse_args()
         print(args)
