@@ -1,16 +1,11 @@
 __author__ = 'Santiago Velez Saffon'
 
 
-import Queue
-import threading
-
-
-
 class default_tester:
 
     def test(self,data):
 
-        aux="ff aaa"
+        aux="jsff aaa"
 
         if data==aux or aux in data:
             return True
@@ -88,6 +83,9 @@ class delta_debugger:
         #a more suitable divider
         self.divider=divider
 
+        #this variable tells if we should collect all the cases that make fail the test
+        self.all_test=True
+
 
     def _print__(self,data):
         print(data)
@@ -110,7 +108,7 @@ class delta_debugger:
 
             case.set_test(self.initial_input)
 
-            self._minimize_(case,2)
+            return self._minimize_(case,2)
 
     def _minimize_(self,cxam,gran):
 
@@ -119,6 +117,8 @@ class delta_debugger:
         cases=[]
         cases.append(cxam)
 
+        found=[]
+
         while len(cases)>0 and not out :
 
             cxa=cases.pop()
@@ -126,7 +126,6 @@ class delta_debugger:
             cx=self.divider.divide(cxa.data,cxa.granularity)
 
             passing=[]
-
 
             for test_aux in cx:
 
@@ -150,7 +149,6 @@ class delta_debugger:
                         passing_com.append(aux_case)
 
 
-
                 if len(passing_com) == 0:
 
                     if cxa.granularity < len(cxa.data):
@@ -159,8 +157,12 @@ class delta_debugger:
 
                         cases.append(cxa)
 
+
+
                     else:
                         out=True
+                        found.append(cxa.data)
+
                 else:
 
                     for pas_com in passing_com:
@@ -171,20 +173,23 @@ class delta_debugger:
 
                         cases.append(new_case)
 
-                    self._print__("--------------passing complements------------")
-                    self._print__(passing_com)
-                    self._print__("---------------------------------------------")
-
             else:
 
-                self._print__("--------------passing initially--------------")
-                self._print__(passing)
-                self._print__("---------------------------------------------")
+                if self.all_test:
+                    for casesub in passing:
+                        found.append(casesub)
 
+                for casesub in passing:
 
+                    case1=Case()
 
+                    case1.set_granularity(2)
 
+                    case1.set_test(casesub)
 
+                    cases.append(case1)
+
+        return found
 
 
 
