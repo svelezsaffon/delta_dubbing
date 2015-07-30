@@ -87,18 +87,12 @@ class delta_debugger:
         self.all_test=True
 
 
-    def _print__(self,data):
-        print(data)
-
-
 
     def start(self):
 
         if not self.tester.test(self.initial_input):
 
-            self._print__("The input does not fail, initially. terminating search!")
-
-            return False
+            return ["The test does not fail from the begining"]
 
         else:
 
