@@ -1,233 +1,56 @@
-__author__ = 'Santiago Velez Saffon'
+__author__ = 'santiago'
 
-
-class default_tester:
-
-    def test(self,data):
-
-        aux="jsff aaa"
-
-        if data==aux or aux in data:
-            return True
-        else:
-            return False
-
-
-class default_divider:
-
-
-    def divide(self,data,granularity):
-
-        chunk=len(data)/granularity + 1;
-
-        answer=[data[i:i+chunk] for i in range(0, len(data), chunk)]
-
-        return answer
-
-    def paste(self,set,remove):
-        value=""
-
-        for a in range(0,len(set)):
-            if a!=remove:
-                value+=set[a]
-
-
-        return value
+#---------------IMPORTS--------------
+import delta_debugging_console
+import os
+#--------------ALL IMPORTS-----------
 
 
 
-class Case:
+def include(filename):
+    if os.path.exists(filename):
+        execfile(filename)
 
-    def __init__(self):
-        self.data=""
-        self.granularity=0
-
-    def set_test(self,tests):
-        self.data=tests
-
-    def set_granularity(self,gran):
-
-        self.granularity=gran
+def main():
+    cmd=delta_debugging_console.command_line()
 
 
+    if cmd.args.controller is not False:
+        include(cmd.args.controller)
+    else:
+        print("[WARNING] not including external controller")
+
+        import delta_debugging_core
+
+        file = open(cmd.args.test_input, 'r')
+
+        test_input=file.read()
+
+        file.close()
+
+        debu= delta_debugging_core.delta_debugger(test_input)
 
 
-class delta_debugger:
+        if cmd.args.all is not True:
+            debu.all_test=False
 
 
+        min_cases=debu.start()
 
-    def __init__(self,initial_input,tester=default_tester(),divider=default_divider()):
+        if cmd.args.test_out is not False:
 
-        #This queue will handle the next input for the algorithm
-        self.next_input=[]
+            filew = open(cmd.args.test_out, "w")
 
-        #This name will have the innitial input test case
-        self.initial_input=initial_input
+            for mcase in min_cases:
+                filew.write(mcase)
+                filew.write("\n")
 
-        #This set will hold all the failed test inputs
-        self.min_sets=set()
-
-        #This Queue will hold the next inputs that make the test faill.
-        self.failed_input=[]
-
-        #This counter will count how many iterations have been made
-        self.iterations=0
-
-        #This is the files used for the output
-        self.output=""
-
-        #This is the default tester, the user can provide a tester class
-        self.tester=tester
-
-        #This is a divider class, the user would be able to provide a diverder clas, in cass he want to make
-        #a more suitable divider
-        self.divider=divider
-
-        #this variable tells if we should collect all the cases that make fail the test
-        self.all_test=True
-
-
-    def _print__(self,data):
-        print(data)
-
-
-
-    def start(self):
-
-        if not self.tester.test(self.initial_input):
-
-            self._print__("The input does not fail, initially. terminating search!")
-
-            return False
+            filew.close()
 
         else:
+            print(min_cases)
 
-            case=Case()
 
-            case.set_granularity(2)
 
-            case.set_test(self.initial_input)
 
-            return self._minimize_(case,2)
-
-    def _minimize_(self,cxam,gran):
-
-        out=False
-
-        cases=[]
-        cases.append(cxam)
-
-        found=[]
-
-        while len(cases)>0 and not out :
-
-            cxa=cases.pop()
-
-            cx=self.divider.divide(cxa.data,cxa.granularity)
-
-            passing=[]
-
-            for test_aux in cx:
-
-                if self.tester.test(test_aux):
-                    passing.append(test_aux)
-
-
-
-            if len(passing) == 0:
-                #Test didnt pass, So we need to increase granularity or stop the process
-
-                #first we need to check the complements
-
-                passing_com=[]
-
-
-                for sub_case in range(0,len(cx)):
-                    aux_case=self.divider.paste(cx,sub_case)
-
-                    if self.tester.test(aux_case):
-                        passing_com.append(aux_case)
-
-
-                if len(passing_com) == 0:
-
-                    if cxa.granularity < len(cxa.data):
-
-                        cxa.set_granularity(min(len(cxa.data),2*cxa.granularity))
-
-                        cases.append(cxa)
-
-
-
-                    else:
-                        out=True
-                        found.append(cxa.data)
-
-                else:
-
-                    for pas_com in passing_com:
-
-                        new_case=Case()
-                        new_case.data=pas_com
-                        new_case.granularity=cxa.granularity
-
-                        cases.append(new_case)
-
-            else:
-
-                if self.all_test:
-                    for casesub in passing:
-                        found.append(casesub)
-
-                for casesub in passing:
-
-                    case1=Case()
-
-                    case1.set_granularity(2)
-
-                    case1.set_test(casesub)
-
-                    cases.append(case1)
-
-        return found
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == "__main__": main()

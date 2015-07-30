@@ -1,7 +1,8 @@
 __author__ = 'santiago'
 
 
-import delta_debugging
+
+import delta_debugging_core
 
 
 
@@ -19,7 +20,7 @@ class Svs_tester:
 
 svs_tester=Svs_tester()
 
-debu= delta_debugging.delta_debugger("Santiago lkjsff aaa Velez Saffon antiago",svs_tester)
+debu= delta_debugging_core.delta_debugger("Santiago lkjsff aaa Velez Saffon antiago",svs_tester)
 
 
 
