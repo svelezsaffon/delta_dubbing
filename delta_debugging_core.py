@@ -73,6 +73,8 @@ class delta_debugger:
         #This counter will count how many iterations have been made
         self.iterations=0
 
+        self.iter_limits=False
+
         #This is the files used for the output
         self.output=""
 
@@ -90,7 +92,7 @@ class delta_debugger:
 
     def start(self):
 
-        if not self.tester.test(self.initial_input):
+        if self.tester.test(self.initial_input):
 
             return ["The test does not fail from the begining"]
 
@@ -115,6 +117,7 @@ class delta_debugger:
 
         while len(cases)>0 and not out :
 
+
             cxa=cases.pop()
 
             cx=self.divider.divide(cxa.data,cxa.granularity)
@@ -137,6 +140,7 @@ class delta_debugger:
 
 
                 for sub_case in range(0,len(cx)):
+
                     aux_case=self.divider.paste(cx,sub_case)
 
                     if self.tester.test(aux_case):
@@ -151,10 +155,13 @@ class delta_debugger:
 
                         cases.append(cxa)
 
-
-
                     else:
-                        out=True
+                        if self.iter_limits is True:
+                            self.iterations-=1
+
+                            if self.iterations is 0:
+                                out=True
+
                         found.append(cxa.data)
 
                 else:
@@ -162,12 +169,15 @@ class delta_debugger:
                     for pas_com in passing_com:
 
                         new_case=Case()
+
                         new_case.data=pas_com
+
                         new_case.granularity=cxa.granularity
 
                         cases.append(new_case)
 
             else:
+
 
                 if self.all_test:
                     for casesub in passing:
