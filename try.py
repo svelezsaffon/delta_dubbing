@@ -10,7 +10,7 @@ class Svs_tester:
 
     def test(self,data):
 
-        aux="antiago"
+        aux="Jorge"
 
         if data==aux or aux in data:
             return True
@@ -21,6 +21,8 @@ class Svs_tester:
 svs_tester=Svs_tester()
 
 debu= delta_debugging_core.delta_debugger("Santiago lkjsff aaa Velez Saffon antiago",svs_tester)
+
+debu.all_test=False
 
 
 
